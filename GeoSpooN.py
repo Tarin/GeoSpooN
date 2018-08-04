@@ -5,7 +5,7 @@ import sys
 from Tkinter import *
 import subprocess
 import time
-from os import system
+import os
 from commands import getoutput
 
 mainW = Tk()
@@ -96,12 +96,12 @@ def clean_exit(cardm, airmonon, mdk3on):
     # Kill MDK3 and take adapter out of monitor mode
     if mdk3on == 1:
         for pid in getoutput("ps aux | grep mdk3 | grep -v grep | awk '{print $2}'").splitlines():
-            system("kill -9 " + pid)
+            os.system("kill -9 " + pid)
         print "\n************\nMDK3 Finished"
 
     if airmonon == 1:
         if "mon" in cardm:  # If Airmon-ng was used to start the adapters monitor mode, use airmon to stop it
-            airoff = subprocess.check_output(["airmon-ng", "stop", cardm])  # Runs Airmon-ng STOP on selected card/adapter
+            airoff = subprocess.check_output(["airmon-ng", "stop", cardm])  # Runs Airmon-ng STOP
             # print airoff
             print "\n************\nMonitor Mode Disabled"
 
@@ -117,7 +117,7 @@ def clean_exit(cardm, airmonon, mdk3on):
     print "\n************\nData Files Cleared"
 
 
-def pages(lat1, lat2, lng1, lng2, nxtpg, wapi1):
+def pages(lat1, lat2, lng1, lng2, nxtpg, wapi2):
     global counter
     #print nxtpg
     page = 1
@@ -129,7 +129,7 @@ def pages(lat1, lat2, lng1, lng2, nxtpg, wapi1):
 
         headers2 = {
             'Accept': 'application/json',
-            'Authorization': wapi1,
+            'Authorization': wapi2,
         }
 
         params2 = (
@@ -279,7 +279,7 @@ def addsearch():
     global pagenum
     gapi1 = gapi_entry.get()
     wapi1 = wapi_entry.get()
-    wapi2 = ""
+    wapi2 = "Basic " + wapi1
     lat1 = lat2 = long1 = long2 = None
     goodone = 0
     if gapi1:
@@ -296,8 +296,7 @@ def addsearch():
         g3 = u.get()
         addcode = g1 + ", " + g2 + ", " + g3  # format address like: "middleton road, york, UK"
 
-        if wapi1:
-            wapi2 = "Basic " + wapi1
+        # wapi2 = "Basic " + wapi1
 
         headers = {
             'Accept': 'application/json',
@@ -326,7 +325,7 @@ def addsearch():
 
     headers2 = {
         'Accept': 'application/json',
-        'Authorization': wapi1
+        'Authorization': wapi2,
     }
 
     params2 = (
@@ -342,8 +341,6 @@ def addsearch():
     )
 
     result = requests.get('https://api.wigle.net/api/v2/network/search', headers=headers2, params=params2)
-    print "\n*&*&*&*_-_-_-_-_-_-_*&*&*&*\n"
-    print result
     if 'too many queries today' in result.text:
         sys.exit('code 500: Too many queries today')
 
@@ -397,7 +394,7 @@ def addsearch():
     wf.close()
     if totalres > 100:
         # print str(totalres) + "TOTAL"
-        pagenum = pages(lat1, lat2, long1, long2, more, wapi1)  # If there are more than 100 AP's, split them into pages of 100
+        pagenum = pages(lat1, lat2, long1, long2, more, wapi2)  # If there are more than 100 AP's, split them into pages of 100
 
     decide()
 
@@ -423,7 +420,22 @@ def test():
     # pages(lat1, lat2, long1, long2, nxtpg)
     # subprocess.Popen("rm Data/*.txt", shell=True)
 
+def directory():
+    isdir = os.path.isdir("Data")
+    # print "\n*******\n" + str(isdir)
+    path = "Data"
+    if isdir == False:
+        try:
+            os.mkdir(path)
+        except OSError:
+            print ("%s directory could not be made" % path)
+        else:
+            print ("%s directory has been successfully created" % path)
+    elif isdir:
+        print ("%s directory already exists, perfect" % path)
 
+
+directory()
 # global variables
 mdk3on = 0
 airmonon = 0
