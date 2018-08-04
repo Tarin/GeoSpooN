@@ -12,4 +12,4 @@ It runs only on Linux for the moment and requires ifconfig, ip, iwconfig, iw, Ai
 
 I am working on making it available as a command line tool also, to be able to run it from the raspberry pi, making it a lot more portable.
 
-NOTE: THIS IS FOR RESEARCH USE ONLY, IF USED IMPROPERLY IT CAN HAVE AN EFFECT ON OTHER DEVICES WITHIN RANGE, PLEASE USE RESPONSIBLY.
+NOTE!!: THIS IS FOR RESEARCH USE ONLY, IF USED IMPROPERLY IT CAN HAVE AN EFFECT ON OTHER DEVICES WITHIN RANGE, PLEASE USE RESPONSIBLY.
